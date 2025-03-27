@@ -6,6 +6,7 @@ public class BaseWebApplicationSetup<TProgram> : WebApplicationFactory<TProgram>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // Pass all the setup logic
+        // TODO: Add other services you want to import
+        builder.UseEnvironment("Testing");
     }
 }

@@ -1,13 +1,14 @@
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Xunit;
 
 namespace Tests;
 
-public class WebSocketIntegrationTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class WebSocketIntegrationTests(BaseWebApplicationSetup<Program> factory) : IClassFixture<BaseWebApplicationSetup<Program>>
 {
-    private readonly WebApplicationFactory<Program> factory = factory;
+    private readonly BaseWebApplicationSetup<Program> factory = factory;
 
     [Fact]
     public async Task WebSocket_Echo_Test()
