@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Tests;
 
-public class WeatherForecastApiTests(WebApplicationFactory<Program> factory)
-    : IClassFixture<WebApplicationFactory<Program>>
+public class WeatherForecastApiTests(BaseWebApplicationSetup<Program> factory) : IClassFixture<BaseWebApplicationSetup<Program>>
 {
     [Fact]
     public async Task WeatherForecast_Endpoint_Returns_SuccessResponse_With_ValidData()
