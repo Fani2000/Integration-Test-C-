@@ -1,5 +1,6 @@
 using System.Net.WebSockets;
 using System.Text;
+using WebSocketClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,35 +11,8 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 app.UseWebSockets();
+app.AddWebSocket();
 
-app.Map("/ws", async context =>
-{
-    if(context.WebSockets.IsWebSocketRequest) 
-    {
-        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        await Echo(webSocket);
-    }
-});
-
-async Task Echo(WebSocket webSocket)
-{
-    var buffer = new byte[1024 * 4];
-    WebSocketReceiveResult result;
-    while(!webSocket.CloseStatus.HasValue)
-    {
-        result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-        if(result.MessageType == WebSocketMessageType.Text) 
-        {
-            var message =  Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"Received: {message}");
-            var responseBytes = Encoding.UTF8.GetBytes($"Server Echo: {message}");
-            await webSocket.SendAsync(new ArraySegment<byte>(responseBytes, 0,responseBytes.Length), WebSocketMessageType.Text, true, CancellationToken.None);
-        }else {
-            await webSocket.CloseAsync(webSocket.CloseStatus.Value, webSocket.CloseStatusDescription, CancellationToken.None);
-            Console.WriteLine($"Connection closed: {webSocket.CloseStatus} - {webSocket.CloseStatusDescription}");
-        }
-    }
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

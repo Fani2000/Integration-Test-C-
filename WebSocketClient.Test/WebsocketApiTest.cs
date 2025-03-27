@@ -1,24 +1,25 @@
 using System.Net.WebSockets;
 using System.Text;
-using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit;
 
 namespace Tests;
 
-public class WebSocketIntegrationTests(WebApplicationFactory<Program>? factory) : IClassFixture<WebApplicationFactory<Program>>
+public class WebSocketIntegrationTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
+    private readonly WebApplicationFactory<Program> factory = factory;
+
     [Fact]
     public async Task WebSocket_Echo_Test()
     {
         // ARRANGE
-        // Create test HTTP client attached to the in-memory test server
-        var client = factory?.Server.CreateWebSocketClient();
-
         // Construct WebSocket URI based on the in-memory test environment
-        var serverUri = new Uri("ws://localhost/ws");
+        Microsoft.AspNetCore.TestHost.WebSocketClient client = factory.Server.CreateWebSocketClient();
+        
+        var serverUri = new Uri("ws://localhost/api/socket");
 
         // Establish WebSocket connection via the server-side context
-        using var webSocket = await client?.ConnectAsync(serverUri, CancellationToken.None)!;
+        using var webSocket = await client.ConnectAsync(serverUri, CancellationToken.None)!;
 
         // Send a message to the WebSocket server
         var message = "Hello, WebSocket!";
